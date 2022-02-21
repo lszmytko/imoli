@@ -37,10 +37,14 @@ const connect_1 = __importDefault(require("./db/connect"));
 const favourites_1 = __importDefault(require("./routes/favourites"));
 const errorHandler_1 = __importDefault(require("./middleware/errorHandler"));
 const getAllFilms_1 = __importDefault(require("./controllers/getAllFilms"));
+const helmet_1 = __importDefault(require("helmet"));
+const morgan_1 = __importDefault(require("morgan"));
 dotenv.config();
 const app = (0, express_1.default)();
 // middleware
 app.use(express_1.default.json());
+app.use((0, helmet_1.default)());
+app.use((0, morgan_1.default)('combined'));
 // HOME ROUTE
 app.get("/", getAllFilms_1.default);
 // ROUTER
