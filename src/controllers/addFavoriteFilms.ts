@@ -1,21 +1,21 @@
 import axios from "axios";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import FilmList from "../models/filmList";
-import mongoose from "mongoose";
+import { createCustomError } from "../errors/CustomError";
 
-const addFavoriteFilms = async (req: Request, res: Response) => {
+const addFavoriteFilms = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const IDlist = [...new Set(req.body.list)]; // extracting only unique IDs
     const name = req.body.name;
 
     let filmListInDatabase = await FilmList.findOne({ name });
     if (filmListInDatabase)
-      return res.status(400).send("List with such name already exists");
+      return res.status(400).send("List with such name already exists"); // checking if list with such name already exists
 
     let filmData: Array<{}> = [];
 
     for (const filmId of IDlist) {
-      const tempData = await axios.get(`https://swapi.dev/api/films/${filmId}`);
+      const tempData = await axios.get(`https://swapi.dev/api/films/${filmId}`); // Fetching data and adding to array
       const { title, created, characters } = tempData.data;
       const subset = { title, characters, created };
 
@@ -28,14 +28,10 @@ const addFavoriteFilms = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
-      msg: "success",
-      data: filmData,
+      msg: "success"
     });
   } catch (e) {
-    res.status(400).json({
-      msg: "Something went wrong",
-      
-    });
+    next(createCustomError("Something went wrong", 400));
   }
 };
 
