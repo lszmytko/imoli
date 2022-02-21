@@ -4,6 +4,8 @@ import connectDB from "./db/connect";
 import favouritesRouter from "./routes/favourites";
 import errorHandlerMiddleware from "./middleware/errorHandler";
 import getAllFilms from "./controllers/getAllFilms";
+import helmet from "helmet";
+import morgan from 'morgan';
 
 dotenv.config();
 
@@ -12,6 +14,9 @@ const app = express();
 // middleware
 
 app.use(express.json());
+
+app.use(helmet());
+app.use(morgan('combined'));
 
 // HOME ROUTE
 
